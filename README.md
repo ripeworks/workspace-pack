@@ -5,6 +5,12 @@ Create a deployable npm package when using Yarn workspaces
 
 If you use Yarn's `workspaces` feature to manage a monorepo, but need to "pack" a single package into a deployable zip that resolves both local and remote dependencies, this might be the tool for you.
 
+## Install
+
+```
+$ yarn global add workspace-pack
+```
+
 ## Usage
 
 ```bash

@@ -4,6 +4,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "workspace-pack": "^0.0.1"
+    "workspace-pack": "^0.0.2"
   }
 }
