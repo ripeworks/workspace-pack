@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { resolve } = require('path')
 const { execSync } = require('child_process')
 const archiver = require('archiver-promise')

@@ -2,5 +2,8 @@
   "private": true,
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "workspace-pack": "^0.0.1"
+  }
 }
