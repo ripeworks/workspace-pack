@@ -1,0 +1,25 @@
+{
+  "name": "workspace-pack",
+  "version": "0.0.1",
+  "description": "Build a deployable package from a Yarn workspace.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ripeworks/workspace-pack.git"
+  },
+  "author": "Ripeworks <mike@ripeworks.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ripeworks/workspace-pack/issues"
+  },
+  "homepage": "https://github.com/ripeworks/workspace-pack#readme",
+  "dependencies": {
+    "archiver-promise": "^1.0.0",
+    "fast-glob": "^2.1.0",
+    "fs-extra": "^5.0.0",
+    "npm-remote-ls": "^1.3.2"
+  }
+}
