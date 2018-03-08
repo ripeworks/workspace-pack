@@ -2,7 +2,12 @@
   "name": "workspace-pack",
   "version": "0.0.1",
   "description": "Build a deployable package from a Yarn workspace.",
-  "main": "index.js",
+  "files": [
+    "bin/index.js"
+  ],
+  "bin": {
+    "workspace-pack": "./bin/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
