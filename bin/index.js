@@ -4,9 +4,8 @@ const { resolve } = require('path')
 const { execSync } = require('child_process')
 const archiver = require('archiver-promise')
 const glob = require('fast-glob')
-const { ls, config } = require('npm-remote-ls')
 const { existsSync, copySync, removeSync, ensureDirSync } = require('fs-extra')
-config({development: false, optional: false})
+const resolveDependencies = require('../lib/resolveDependencies')
 
 const rootDir = process.cwd()
 const folder = process.argv[2]
@@ -65,32 +64,12 @@ const main = async () => {
     })
 
   // package into zip
-  const zip = archiver(resolve(rootDir, `${pkg.name}.zip`), {store: true})
+  const zip = archiver(resolve(rootDir, `${pkg.name.replace('/', '-')}.zip`), {store: true})
   zip.directory(buildDir, false)
   await zip.finalize()
 
   // remove build folder
   removeSync(buildDir)
-}
-
-const resolveDependencies = async (dependencies, localPkgs = []) => {
-  const deps = []
-
-  for (const dep in dependencies) {
-    const localPkg = localPkgs.find(pkg => pkg.name === dep)
-
-    if (localPkg) {
-      deps.push(dep)
-      deps.push(...(await resolveDependencies(localPkg.dependencies, localPkgs)))
-    } else {
-      const moduleDeps = await new Promise(resolve =>
-        ls(dep, dependencies[dep], true, obj => resolve(obj))
-      )
-      deps.push(...moduleDeps)
-    }
-  }
-
-  return deps
 }
 
 main()
