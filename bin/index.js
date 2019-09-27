@@ -62,7 +62,7 @@ const main = async () => {
     .filter((value, index, self) => self.indexOf(value) === index)
     .map(dep => {
       const versionIndex = dep.lastIndexOf("@");
-      const dirName = dep.substr(0, versionIndex);
+      const dirName = versionIndex <= 0 ? dep : dep.substr(0, versionIndex);
       const dir = resolve(rootDir, "node_modules", dirName);
       if (!existsSync(dir)) return;
 
