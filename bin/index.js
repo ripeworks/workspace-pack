@@ -5,10 +5,18 @@ const { execSync } = require("child_process");
 const archiver = require("archiver-promise");
 const glob = require("fast-glob");
 const { existsSync, copySync, removeSync, ensureDirSync } = require("fs-extra");
+const mri = require("mri");
 const resolveDependencies = require("../lib/resolveDependencies");
 
 const rootDir = process.cwd();
-const folder = process.argv[2];
+const args = mri(process.argv.slice(2), {
+  default: {
+    "build-dir": "_build"
+  },
+  string: ["build-dir", "output"]
+});
+
+const [folder] = args._;
 
 if (!folder) {
   throw new Error("Please supply a folder");
@@ -41,7 +49,7 @@ for (const dir of localPackages) {
   } catch (e) {}
 }
 
-const buildDir = resolve(rootDir, "_build");
+const buildDir = resolve(rootDir, args["build-dir"]);
 removeSync(buildDir);
 
 const main = async () => {
@@ -72,7 +80,8 @@ const main = async () => {
     });
 
   // package into zip
-  const zip = archiver(resolve(rootDir, `${pkg.name.replace("/", "-")}.zip`), {
+  const output = args.output || `${pkg.name.replace("/", "-")}.zip`;
+  const zip = archiver(resolve(rootDir, output), {
     store: true
   });
   zip.directory(buildDir, false);
