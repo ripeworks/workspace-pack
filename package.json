@@ -1,6 +1,6 @@
 {
   "name": "workspace-pack",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Build a deployable package from a Yarn workspace.",
   "files": [
     "bin/index.js",
