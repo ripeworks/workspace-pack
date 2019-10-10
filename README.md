@@ -1,4 +1,5 @@
 # workspace-pack
+
 Create a deployable npm package when using Yarn workspaces
 
 ## Details
@@ -17,3 +18,10 @@ $ yarn global add workspace-pack
 # In your workspaces root dir
 $ workspace-pack my-package-folder
 ```
+
+## Options
+
+| CLI arg       | Description                                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------ |
+| `--build-dir` | Specify where the prepared package is created before it is built and zipped. _Default: `_build`_ |
+| `--output`    | Where to store the resulting .zip file. _Default: `${package.name}.zip`_                         |
