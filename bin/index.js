@@ -29,7 +29,13 @@ if (!workspacePkg.workspaces) {
   );
 }
 
-const localPackages = glob.sync(workspacePkg.workspaces, {
+if (!Array.isArray(workspacePkg.workspaces) && !Array.isArray(workspacePkg.workspaces.packages)) {
+  throw new Error(
+    "The specified `workspaces` field in your package.json must either by an array or an object containing an array with the key `packages`."
+  );
+}
+
+const localPackages = glob.sync(Array.isArray(workspacePkg.workspaces) ? workspacePkg.workspaces : workspacePkg.workspaces.packages, {
   cwd: rootDir,
   onlyDirectories: true
 });
@@ -46,7 +52,7 @@ for (const dir of localPackages) {
   try {
     const pkg = require(resolve(rootDir, dir, "package.json"));
     localModules.push(pkg);
-  } catch (e) {}
+  } catch (e) { }
 }
 
 const buildDir = resolve(rootDir, args["build-dir"]);
@@ -59,7 +65,12 @@ const main = async () => {
 
   // build
   if (pkg.scripts && pkg.scripts.build) {
-    execSync("yarn build", { cwd: buildDir });
+    try {
+      execSync("yarn build", { cwd: buildDir });
+    } catch (buildError) {
+      console.log(buildError.output.toString())
+      throw buildError;
+    }
   }
 
   // resolve dependencies
