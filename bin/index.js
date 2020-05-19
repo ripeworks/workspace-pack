@@ -76,12 +76,13 @@ const main = async () => {
   }
 
   // resolve dependencies
-  const deps = await resolveDependencies(pkg.dependencies, localModules);
+  const deps = await resolveDependencies(pkg.dependencies, localModules, [resolve("node_modules"), resolve(rootDir, pkgDir, "node_modules")]);
 
   // copy dependencies to node_modules
   deps
     .filter((value, index, self) => self.indexOf(value) === index)
     .map(dep => {
+      console.log(dep)
       const versionIndex = dep.lastIndexOf("@");
       const dirName = versionIndex <= 0 ? dep : dep.substr(0, versionIndex);
       const dir = resolve(rootDir, "node_modules", dirName);
