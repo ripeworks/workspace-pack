@@ -11,9 +11,11 @@ const resolveDependencies = require("../lib/resolveDependencies");
 const rootDir = process.cwd();
 const args = mri(process.argv.slice(2), {
   default: {
-    "build-dir": "_build"
+    "build-dir": "_build",
+    "build": true,
   },
-  string: ["build-dir", "output"]
+  string: ["build-dir", "output"],
+  boolean: ["build"],
 });
 
 const [folder] = args._;
@@ -64,7 +66,7 @@ const main = async () => {
   ensureDirSync(resolve(rootDir, pkgDir, "node_modules"));
 
   // build
-  if (pkg.scripts && pkg.scripts.build) {
+  if (args["build"] && pkg.scripts && pkg.scripts.build) {
     try {
       execSync("yarn build", { cwd: buildDir });
     } catch (buildError) {
