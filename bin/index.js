@@ -11,9 +11,11 @@ const resolveDependencies = require("../lib/resolveDependencies");
 const rootDir = process.cwd();
 const args = mri(process.argv.slice(2), {
   default: {
-    "build-dir": "_build"
+    "build-dir": "_build",
+    "build": true,
   },
-  string: ["build-dir", "output"]
+  string: ["build-dir", "output"],
+  boolean: ["build"],
 });
 
 const [folder] = args._;
@@ -29,7 +31,13 @@ if (!workspacePkg.workspaces) {
   );
 }
 
-const localPackages = glob.sync(workspacePkg.workspaces, {
+if (!Array.isArray(workspacePkg.workspaces) && !Array.isArray(workspacePkg.workspaces.packages)) {
+  throw new Error(
+    "The specified `workspaces` field in your package.json must either by an array or an object containing an array with the key `packages`."
+  );
+}
+
+const localPackages = glob.sync(Array.isArray(workspacePkg.workspaces) ? workspacePkg.workspaces : workspacePkg.workspaces.packages, {
   cwd: rootDir,
   onlyDirectories: true
 });
@@ -46,7 +54,7 @@ for (const dir of localPackages) {
   try {
     const pkg = require(resolve(rootDir, dir, "package.json"));
     localModules.push(pkg);
-  } catch (e) {}
+  } catch (e) { }
 }
 
 const buildDir = resolve(rootDir, args["build-dir"]);
@@ -58,17 +66,23 @@ const main = async () => {
   ensureDirSync(resolve(rootDir, pkgDir, "node_modules"));
 
   // build
-  if (pkg.scripts && pkg.scripts.build) {
-    execSync("yarn build", { cwd: buildDir });
+  if (args["build"] && pkg.scripts && pkg.scripts.build) {
+    try {
+      execSync("yarn build", { cwd: buildDir });
+    } catch (buildError) {
+      console.log(buildError.output.toString())
+      throw buildError;
+    }
   }
 
   // resolve dependencies
-  const deps = await resolveDependencies(pkg.dependencies, localModules);
+  const deps = await resolveDependencies(pkg.dependencies, localModules, [resolve("node_modules"), resolve(rootDir, pkgDir, "node_modules")]);
 
   // copy dependencies to node_modules
   deps
     .filter((value, index, self) => self.indexOf(value) === index)
     .map(dep => {
+      console.log(dep)
       const versionIndex = dep.lastIndexOf("@");
       const dirName = versionIndex <= 0 ? dep : dep.substr(0, versionIndex);
       const dir = resolve(rootDir, "node_modules", dirName);
